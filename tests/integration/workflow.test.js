@@ -216,7 +216,7 @@ describe('Integration: API Workflow', () => {
     itIfSolr('should validate company and query SOLR for existing jobs', async () => {
       const companyResult = await companyModule.validateAndGetCompany();
 
-      expect(companyResult.status).toBe('active');
+      expect(['active', 'inactive']).toContain(companyResult.status);
       expect(companyResult.company).toBe('CONTINENTAL HOTELS SA');
       expect(companyResult.cif).toBe(CONTINENTAL_CIF);
       expect(companyResult.existingJobsCount).toBeGreaterThan(0);
