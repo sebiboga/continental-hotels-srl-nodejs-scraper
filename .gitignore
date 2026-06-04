@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+
+# Test outputs
+test-report.html
+test-results*.html
+coverage/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Job data files
+jobs.json
+jobs_continental.json
+jobs_existing.json
+jobs_valid.json
+company_data.json
+company_core.json
+delete.json
+continental_response.json
+
+# Credentials
+*.pem
+*.key
+credentials.json

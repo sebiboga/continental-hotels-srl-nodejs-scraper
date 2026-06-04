@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Continental Hotels Scraper — Documentation</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
+    h1 { border-bottom: 2px solid #eee; padding-bottom: .5rem; }
+    code { background: #f4f4f4; padding: .2rem .4rem; border-radius: 3px; }
+    pre { background: #f4f4f4; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>Continental Hotels Scraper</h1>
+  <p>Scraper pentru platforma <strong>peviitor.ro</strong>.</p>
+
+  <h2>Structură</h2>
+  <ul>
+    <li><code>index.js</code> — orchestrator principal</li>
+    <li><code>company.js</code> — validare companie (ANAF + Peviitor + SOLR)</li>
+    <li><code>solr.js</code> — operațiuni SOLR</li>
+    <li><code>src/anaf.js</code> — bibliotecă ANAF</li>
+  </ul>
+
+  <h2>Rulare</h2>
+  <pre>npm run scrape        # rulează scraperul
+npm test             # rulează teste unitare</pre>
+
+  <h2>Variabile de mediu</h2>
+  <p><code>SOLR_AUTH</code> — credentiale SOLR (opțional pentru teste)</p>
+</body>
+</html>
