@@ -220,15 +220,12 @@ export async function validateAndGetCompany() {
 
   saveCompanyData(anafData, peviitorData);
 
-  if (!active) {
-    console.log("\n⚠️ Company is INACTIVE in ANAF - deleting jobs from SOLR and stopping");
-    if (solrResult.numFound > 0) {
-      await deleteJobsByCIF(cif);
-    }
-    return { status: "inactive", company, cif, existingJobsCount: solrResult.numFound };
-  }
-
   const address = anafData?.address || anafData?.headquartersAddress?.locality || "";
+
+  if (!active) {
+    console.log("\n⚠️ ANAF reports company as INACTIVE — jobs will NOT be deleted. The ANAF status may be a false positive. Proceeding with existing data.\n");
+    return { status: "inactive", company, cif, existingJobsCount: solrResult.numFound, address, anafData };
+  }
 
   console.log(`\n✅ Company validated: ${company}, CIF: ${cif}`);
   console.log("Ready to scrape jobs...\n");
