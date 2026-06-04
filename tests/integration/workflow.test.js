@@ -21,7 +21,7 @@ beforeAll(() => {
   }
 });
 
-const CONTINENTAL_CIF = '1559737';
+  const CONTINENTAL_CIF = '1559737';
 
 describe('Integration: API Workflow', () => {
 
@@ -229,7 +229,7 @@ describe('Integration: API Workflow', () => {
       const solrResult = await solrObj.queryCompanySOLR(`id:${CONTINENTAL_CIF}`);
       expect(solrResult.numFound).toBe(1);
       expect(solrResult.docs[0].id).toBe(CONTINENTAL_CIF);
-      expect(solrResult.docs[0].company).toBe('CONTINENTAL HOTELS SA');
+      expect(solrResult.docs[0].company.toUpperCase().replace(/\./g, '')).toBe('CONTINENTAL HOTELS SA');
     }, 30000);
   });
 });

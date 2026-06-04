@@ -67,7 +67,7 @@ function mapToJobModel(job, cif, companyName) {
     country: job.country || 'România',
     workmode: job.workmode || 'on-site',
     status: 'scraped',
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString()
   };
 }
 

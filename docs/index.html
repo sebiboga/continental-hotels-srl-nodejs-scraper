@@ -3,31 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Continental Hotels Scraper — Documentation</title>
+  <title>Continental Hotels Scraper — Documentație</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
     h1 { border-bottom: 2px solid #eee; padding-bottom: .5rem; }
+    h2 { margin-top: 2rem; }
     code { background: #f4f4f4; padding: .2rem .4rem; border-radius: 3px; }
     pre { background: #f4f4f4; padding: 1rem; border-radius: 5px; overflow-x: auto; }
+    .badge { display: inline-block; padding: .2rem .6rem; border-radius: 12px; font-size: .8rem; font-weight: bold; }
+    .badge-green { background: #2ea44f; color: #fff; }
+    .stats { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+    .stat-card { background: #f4f4f4; padding: 1rem; border-radius: 8px; flex: 1; min-width: 120px; text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: bold; }
+    .stat-label { font-size: .8rem; color: #666; }
+    .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: .85rem; color: #666; }
   </style>
 </head>
 <body>
-  <h1>Continental Hotels Scraper</h1>
-  <p>Scraper pentru platforma <strong>peviitor.ro</strong>.</p>
 
-  <h2>Structură</h2>
-  <ul>
-    <li><code>index.js</code> — orchestrator principal</li>
-    <li><code>company.js</code> — validare companie (ANAF + Peviitor + SOLR)</li>
-    <li><code>solr.js</code> — operațiuni SOLR</li>
-    <li><code>src/anaf.js</code> — bibliotecă ANAF</li>
-  </ul>
+<h1>Continental Hotels Scraper</h1>
+<p>
+  <span class="badge badge-green">Activ</span>
+  Scraper pentru <strong>Continental Hotels</strong> în platforma <a href="https://peviitor.ro" target="_blank">peviitor.ro</a>.
+</p>
 
-  <h2>Rulare</h2>
-  <pre>npm run scrape        # rulează scraperul
-npm test             # rulează teste unitare</pre>
+<div class="stats">
+  <div class="stat-card">
+    <div class="stat-value" id="jobsCount">?</div>
+    <div class="stat-label">Joburi în SOLR</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">7</div>
+    <div class="stat-label">CIF (1559737)</div>
+  </div>
+</div>
 
-  <h2>Variabile de mediu</h2>
-  <p><code>SOLR_AUTH</code> — credentiale SOLR (opțional pentru teste)</p>
+<h2>Structură</h2>
+<ul>
+  <li><code>index.js</code> — orchestrator principal (scraping, transformare, upsert)</li>
+  <li><code>company.js</code> — validare companie (ANAF + Peviitor + SOLR)</li>
+  <li><code>solr.js</code> — operațiuni SOLR (query, upsert, delete)</li>
+  <li><code>src/anaf.js</code> — bibliotecă ANAF</li>
+</ul>
+
+<h2>Rulare</h2>
+<pre>npm run scrape        # rulează scraperul
+npm run test:unit     # teste unitare
+npm run test:integration # teste integrare (necesită SOLR_AUTH)
+npm run test:e2e      # teste end-to-end (necesită SOLR_AUTH)</pre>
+
+<h2>Variabile de mediu</h2>
+<table>
+  <tr><th>Variabila</th><th>Descriere</th></tr>
+  <tr><td><code>SOLR_AUTH</code></td><td>Credentiale SOLR (format <code>username:password</code>)</td></tr>
+</table>
+
+<h2>Programare</h2>
+<p>Scraperul rulează automat la fiecare 6 ore prin GitHub Actions.</p>
+<p>Ultima actualizare: <span id="lastUpdated">—</span></p>
+
+<div class="footer">
+  <p>
+    <a href="https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper" target="_blank">GitHub</a> •
+    <a href="https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/blob/main/README.md" target="_blank">Documentație</a> •
+    <a href="https://peviitor.ro" target="_blank">peviitor.ro</a>
+  </p>
+</div>
+
+<script>
+  document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('ro-RO', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
+</script>
+
 </body>
 </html>

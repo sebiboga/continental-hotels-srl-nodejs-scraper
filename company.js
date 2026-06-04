@@ -6,6 +6,7 @@ import { getCompanyFromANAF, searchCompany, getCompanyFromANAFWithFallback } fro
 const Peviitor_API_URL = "https://api.peviitor.ro/v1/company/";
 
 const COMPANY_BRAND = "CONTINENTAL HOTELS";
+const ANAF_SEARCH_QUERY = "CONTINENTAL HOTELS SA";
 
 export function getCompanyBrand() {
   return COMPANY_BRAND;
@@ -127,30 +128,38 @@ export async function getCompanyData() {
   const cachedData = loadCachedCompanyData();
 
   if (!cachedData?.summary?.cif) {
-    console.log(`Searching for company with brand: ${COMPANY_BRAND}`);
-    const searchResults = await searchCompany(COMPANY_BRAND);
+    console.log(`Searching for company with query: ${ANAF_SEARCH_QUERY}`);
+    const searchResults = await searchCompany(ANAF_SEARCH_QUERY);
 
     if (!searchResults || searchResults.length === 0) {
-      throw new Error(`No companies found for brand: ${COMPANY_BRAND}`);
+      throw new Error(`No companies found for query: ${ANAF_SEARCH_QUERY}`);
     }
 
-    const exactMatch = searchResults.find(c =>
-      (c.name.toUpperCase().startsWith(COMPANY_BRAND.toUpperCase() + " ") ||
-       c.name.toUpperCase().includes(" " + COMPANY_BRAND.toUpperCase() + " ")) &&
-      c.statusLabel === "Funcțiune"
+    const nameMatch = searchResults.find(c =>
+      c.name.toUpperCase().trim() === ANAF_SEARCH_QUERY.toUpperCase()
     );
-
-    if (!exactMatch) {
-      console.log("No exact match with 'Funcțiune' status, trying first active company...");
-      const activeMatch = searchResults.find(c => c.statusLabel === "Funcțiune");
-      if (!activeMatch) {
-        throw new Error(`No active company found for brand: ${COMPANY_BRAND}`);
-      }
-      var selectedCIF = activeMatch.cui;
-      console.log(`Selected: ${activeMatch.name} (CIF: ${selectedCIF})`);
+    if (nameMatch) {
+      var selectedCIF = nameMatch.cui;
+      console.log(`Found exact name match: ${nameMatch.name} (CIF: ${selectedCIF})`);
     } else {
-      var selectedCIF = exactMatch.cui;
-      console.log(`Found exact match: ${exactMatch.name} (CIF: ${selectedCIF})`);
+      const exactMatch = searchResults.find(c =>
+        (c.name.toUpperCase().startsWith(COMPANY_BRAND.toUpperCase() + " ") ||
+         c.name.toUpperCase().includes(" " + COMPANY_BRAND.toUpperCase() + " ")) &&
+        c.statusLabel === "Funcțiune"
+      );
+
+      if (exactMatch) {
+        var selectedCIF = exactMatch.cui;
+        console.log(`Found exact match: ${exactMatch.name} (CIF: ${selectedCIF})`);
+      } else {
+        console.log("No exact match with 'Funcțiune' status, trying first active company...");
+        const activeMatch = searchResults.find(c => c.statusLabel === "Funcțiune");
+        if (!activeMatch) {
+          throw new Error(`No active company found for brand: ${COMPANY_BRAND}`);
+        }
+        var selectedCIF = activeMatch.cui;
+        console.log(`Selected: ${activeMatch.name} (CIF: ${selectedCIF})`);
+      }
     }
 
     console.log(`Fetching company details for CIF: ${selectedCIF}`);
@@ -245,7 +254,7 @@ export async function addCompanyToCompanyCore(company, cif, anafData, careersPag
       website: ["https://continentalhotels.ro"],
       career: [careersPage || "https://www.jobs-continentalhotels.ro/"],
       lastScraped: now,
-      scraperFile: "index.js"
+      scraperFile: "https://raw.githubusercontent.com/sebiboga/continental-hotels-srl-nodejs-scraper/main/.github/workflows/scrape.yml"
     }
   ];
 
