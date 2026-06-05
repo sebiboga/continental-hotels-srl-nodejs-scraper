@@ -3,293 +3,421 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Continental Hotels Scraper — Documentație</title>
+  <title>Continental Hotels Jobs - peviitor.ro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0d1117;
-      --surface: #161b22;
-      --border: #30363d;
-      --text: #e6edf3;
-      --text-muted: #8b949e;
-      --accent: #58a6ff;
-      --success: #3fb950;
-      --warning: #d29922;
-      --danger: #f85149;
-      --radius: 8px;
-    }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    ::-webkit-scrollbar { width: 13px; }
+    ::-webkit-scrollbar-track { box-shadow: inset 0 0 5px grey; }
+    ::-webkit-scrollbar-thumb { background: #9b59b6; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #8e44ad; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      padding: 2rem 1rem;
+      font-family: "Poppins", sans-serif;
+      background: #e9e9e9;
+      min-height: 100vh;
     }
-
-    .container { max-width: 960px; margin: 0 auto; }
-
-    header {
+    .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
-    header h1 {
-      font-size: 1.75rem;
-      font-weight: 600;
-    }
-
-    header h1 small {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-
-    .badge {
-      display: inline-flex;
+    .header .logo {
+      display: flex;
       align-items: center;
-      gap: 0.35rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      white-space: nowrap;
+      font-family: "Times New Roman", Times, serif;
+      font-weight: bold;
+      font-size: 1.5em;
+      color: #9b59b6;
     }
-
-    .badge-success { background: rgba(63, 185, 80, 0.15); color: var(--success); border: 1px solid rgba(63, 185, 80, 0.3); }
-    .badge-warning { background: rgba(210, 153, 34, 0.15); color: var(--warning); border: 1px solid rgba(210, 153, 34, 0.3); }
-    .badge-danger  { background: rgba(248, 81, 73, 0.15); color: var(--danger); border: 1px solid rgba(248, 81, 73, 0.3); }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
+    .header a {
+      text-decoration: none;
+      color: #333;
     }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      text-align: center;
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 40px 20px;
     }
-
-    .stat-card .value {
-      font-size: 2.25rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-
-    .stat-card .label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    .stat-card .sub {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 0.5rem;
-    }
-
-    section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    section h2 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    ul, ol { padding-left: 1.25rem; }
-    li { margin-bottom: 0.35rem; }
-
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    code {
-      background: rgba(110, 118, 129, 0.2);
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.85em;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    }
-
-    pre {
-      background: rgba(110, 118, 129, 0.1);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem;
-      overflow-x: auto;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      font-size: 0.85rem;
-      line-height: 1.5;
-    }
-
-    table {
+    .scraper-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 900px;
       width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
+      border-radius: 20px;
+      padding: 30px;
+      margin: 20px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
-    th, td {
-      padding: 0.6rem 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-
-    th {
-      font-weight: 600;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .chip-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-    .chip {
-      background: rgba(88, 166, 255, 0.1);
-      border: 1px solid rgba(88, 166, 255, 0.2);
-      color: var(--accent);
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-    }
-
-    .footer {
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .scraper-logo {
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+      height: 150px;
       display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      margin-bottom: 20px;
     }
-
-    .footer a { color: var(--text-muted); }
-    .footer a:hover { color: var(--accent); }
-
-    @media (max-width: 600px) {
-      header { flex-direction: column; align-items: flex-start; }
+    .scraper-logo .logo-text {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 2em;
+      font-weight: bold;
+      color: #9b59b6;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .scraper-info {
+      text-align: center;
+      width: 100%;
+    }
+    .scraper-info h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1.8em;
+    }
+    .scraper-info p {
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: #9b59b6;
+      border-radius: 15px;
+      padding: 20px 30px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .stat-value {
+      font-size: 2em;
+      font-weight: bold;
+      color: #fff;
+    }
+    .stat-label {
+      font-size: 0.85em;
+      opacity: 0.9;
+      color: #fff;
+    }
+    .stat-value-small {
+      font-size: 0.9em;
+      color: #fff;
+      margin-top: 5px;
+    }
+    .features {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      width: 100%;
+    }
+    .features h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    .features ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .features li {
+      padding: 8px 15px;
+      color: #555;
+      background: #fff;
+      border-radius: 20px;
+      font-size: 0.9em;
+    }
+    .features li:before {
+      content: "✓";
+      color: #28a745;
+      margin-right: 8px;
+      font-weight: bold;
+    }
+    .btn {
+      background: #9b59b6;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin: 10px 0;
+      transition: transform 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .jobs-list {
+      margin-top: 20px;
+      width: 100%;
+    }
+    .jobs-list h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    .jobs-list ul {
+      list-style: none;
+    }
+    .jobs-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .jobs-list a {
+      color: #9b59b6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .jobs-list a:hover {
+      text-decoration: underline;
+    }
+    .jobs-list .job-meta {
+      font-size: 0.8em;
+      color: #888;
+      margin-top: 4px;
+    }
+    .jobs-list .job-meta span {
+      margin-right: 12px;
+    }
+    .company-info {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      width: 100%;
+    }
+    .company-info h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    .company-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .company-details .detail-item {
+      background: #fff;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 0.9em;
+    }
+    .company-details .detail-item strong {
+      color: #9b59b6;
+    }
+    .company-details .detail-item a {
+      color: #9b59b6;
+      text-decoration: none;
+    }
+    .company-details .detail-item a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #999;
+      font-size: 0.9em;
+      padding: 20px;
+    }
+    .footer a {
+      color: #9b59b6;
+      text-decoration: none;
+    }
+    @media (max-width: 768px) {
+      .stats {
+        flex-direction: column;
+        align-items: center;
+      }
+      .stat {
+        width: 80%;
+      }
+      .features ul {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
+  <header class="header">
+    <div class="logo">
+      <a href="https://peviitor.ro/" target="_blank">peviitor</a>
+    </div>
+    <a href="https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/blob/main/AGENTS.md" target="_blank">Documentație</a>
+  </header>
+
   <div class="container">
-
-    <header>
-      <div>
-        <h1>
-          Continental Hotels Scraper
-          <small>Colectare automată joburi pentru <a href="https://peviitor.ro" target="_blank">peviitor.ro</a></small>
-        </h1>
+    <div class="scraper-container">
+      <div class="scraper-logo">
+        <div class="logo-text">Continental<br>Hotels</div>
       </div>
-      <div>
-        <span class="badge badge-success">Activ</span>
-        <span class="badge badge-warning">CIF 1559737</span>
-      </div>
-    </header>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="value">6</div>
-        <div class="label">Joburi active</div>
-      </div>
-      <div class="stat-card">
-        <div class="value">3</div>
-        <div class="label">Orașe</div>
-      </div>
-      <div class="stat-card">
-        <div class="value">1</div>
-        <div class="label">Tipuri de program</div>
-      </div>
-      <div class="stat-card">
-        <div class="value" style="font-size:1rem;word-break:break-all;">CONTINENTAL HOTELS SA</div>
-        <div class="label">Companie</div>
+      
+      <div class="scraper-info">
+        <h1>CONTINENTAL HOTELS SA</h1>
+        <p>job_seeker_ro_spider — scraper automat pentru job-urile Continental Hotels România.</p>
+        
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value" id="jobsCount">-</div>
+            <div class="stat-label">Job-uri</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="verifiedCount">-</div>
+            <div class="stat-label">Verificate</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="lastRunTime">-</div>
+            <div class="stat-value-small" id="lastRunDate">-</div>
+          </div>
+        </div>
+        
+        <div class="features">
+          <h3>Ce face acest scraper:</h3>
+          <ul>
+            <li>Extrage job-uri de pe Continental Hotels Careers</li>
+            <li>Parsează cu Cheerio (HTML)</li>
+            <li>Validează compania via ANAF</li>
+            <li>Verifică și elimină job-uri expirate</li>
+            <li>Salvează în SOLR pentru peviitor.ro</li>
+          </ul>
+        </div>
+        
+        <div class="company-info" id="companyInfo">
+          <h3>Despre companie:</h3>
+          <div class="company-details"></div>
+        </div>
+        
+        <a class="btn" href="https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/actions/workflows/scrape.yml" target="_blank">
+          ▶ Rulează Scraper
+        </a>
+        
+        <div class="jobs-list" id="jobsList">
+          <h3>Job-uri disponibile:</h3>
+          <ul id="jobsListContent"></ul>
+        </div>
       </div>
     </div>
-
-    <section>
-      <h2>📊 Rezumat joburi</h2>
-      <table>
-        <thead>
-          <tr><th>Tip program</th><th>Număr joburi</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>on-site</td><td>6</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <h2>📍 Locații</h2>
-      <div class="chip-list"><span class="chip">Bucuresti</span><span class="chip">Drobeta-Turnu Severin</span><span class="chip">Sibiu</span></div>
-    </section>
-
-    <section>
-      <h2>🏗️ Structură proiect</h2>
-      <ul>
-        <li><code>index.js</code> — orchestrator principal (scraping, transformare, upsert SOLR)</li>
-        <li><code>company.js</code> — validare companie (ANAF + Peviitor + SOLR)</li>
-        <li><code>solr.js</code> — operațiuni SOLR (query, upsert, delete)</li>
-        <li><code>src/anaf.js</code> — bibliotecă ANAF (căutare, detalii, retry)</li>
-        <li><code>scripts/generate-docs.js</code> — generator acestei pagini</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>🚀 Rulare</h2>
-      <pre>npm run scrape             # rulează scraperul complet
-npm run docs               # generează docs/index.html
-npm run test               # teste unitare + integrare + e2e
-npm run test:unit          # doar teste unitare
-npm run test:integration   # teste integrare (necesită SOLR_AUTH)
-npm run test:e2e           # teste e2e (necesită SOLR_AUTH)</pre>
-    </section>
-
-    <section>
-      <h2>🔧 Variabile de mediu</h2>
-      <table>
-        <thead>
-          <tr><th>Variabilă</th><th>Descriere</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>SOLR_AUTH</code></td><td>Credențiale SOLR (format <code>username:password</code>)</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <h2>⏰ Programare</h2>
-      <p>Rulează automat la fiecare <strong>6 ore</strong> prin GitHub Actions (<code>.github/workflows/scrape.yml</code>).</p>
-      <p>Testele rulează la fiecare push și PR prin <code>.github/workflows/test.yml</code>.</p>
-    </section>
-
-    <div class="footer">
-      <span>
-        <a href="https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper" target="_blank">GitHub</a> •
-        <a href="https://peviitor.ro" target="_blank">peviitor.ro</a>
-      </span>
-      <span>Generat la 4 iunie 2026 la 23:56</span>
-    </div>
-
   </div>
+
+  <footer class="footer">
+    <a href="https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper" target="_blank">GitHub</a> •
+    <a href="https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/blob/main/AGENTS.md" target="_blank">Documentație</a> •
+    <a href="https://peviitor.ro/" target="_blank">peviitor.ro</a>
+  </footer>
+
+  <script>
+    const COMPANY = "CONTINENTAL HOTELS SA";
+    const COMPANY_LOGO = "CONTINENTAL%20HOTELS";
+
+    async function loadStats() {
+      try {
+        const res = await fetch(`https://api.peviitor.ro/v1/search/?company=${encodeURIComponent(COMPANY)}&page=1`, {
+          headers: {
+            'origin': 'https://peviitor.ro',
+            'referer': 'https://peviitor.ro/'
+          }
+        });
+        const data = await res.json();
+        document.getElementById('jobsCount').textContent = data.response.numFound;
+        
+        const vRes = await fetch(`https://api.peviitor.ro/v1/search/?company=${encodeURIComponent(COMPANY)}&status=verified&page=1`, {
+          headers: {
+            'origin': 'https://peviitor.ro',
+            'referer': 'https://peviitor.ro/'
+          }
+        });
+        const vData = await vRes.json();
+        document.getElementById('verifiedCount').textContent = vData.response.numFound;
+        
+        const now = new Date();
+        const time = now.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+        const date = now.toLocaleDateString('ro-RO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        document.getElementById('lastRunTime').textContent = time;
+        document.getElementById('lastRunDate').textContent = date;
+        
+        const jobsList = document.getElementById('jobsListContent');
+        jobsList.innerHTML = '';
+        
+        let page = 1;
+        let moreJobs = true;
+        while (moreJobs) {
+          const jobsRes = await fetch(`https://api.peviitor.ro/v1/search/?company=${encodeURIComponent(COMPANY)}&page=${page}`, {
+            headers: {
+              'origin': 'https://peviitor.ro',
+              'referer': 'https://peviitor.ro/'
+            }
+          });
+          const jobsData = await jobsRes.json();
+          if (jobsData.response.docs.length === 0) {
+            moreJobs = false;
+          } else {
+            jobsData.response.docs.forEach(job => {
+              const li = document.createElement('li');
+              const location = Array.isArray(job.location) ? job.location.join(', ') : '';
+              const workmode = job.workmode || '';
+              li.innerHTML = `
+                <a href="${job.url}" target="_blank">${job.job_title}</a>
+                <div class="job-meta">
+                  ${location ? `<span>📍 ${location}</span>` : ''}
+                  ${workmode ? `<span>💼 ${workmode}</span>` : ''}
+                </div>
+              `;
+              jobsList.appendChild(li);
+            });
+            page++;
+          }
+        }
+        
+        const cRes = await fetch(`https://api.peviitor.ro/v1/company/?name=${COMPANY_LOGO}`, {
+          headers: {
+            'origin': 'https://peviitor.ro',
+            'referer': 'https://peviitor.ro/'
+          }
+        });
+        const cData = await cRes.json();
+        const comp = cData.companies?.[0];
+        if (comp) {
+          const detailsDiv = document.querySelector('.company-details');
+          detailsDiv.innerHTML = `
+            <div class="detail-item"><strong>CIF:</strong> ${comp.id}</div>
+            <div class="detail-item"><strong>Brand:</strong> ${comp.brand}</div>
+            <div class="detail-item"><strong>Status:</strong> ${comp.status}</div>
+            <div class="detail-item"><strong>Orașe:</strong> ${(comp.location || []).join(', ')}</div>
+            <div class="detail-item"><strong>Website:</strong> <a href="${(comp.website || [])[0] || '#'}" target="_blank">${(comp.website || [])[0] || '—'}</a></div>
+            <div class="detail-item"><strong>Career:</strong> <a href="${(comp.career || [])[0] || '#'}" target="_blank">${(comp.career || [])[0] || '—'}</a></div>
+            <div class="detail-item"><strong>Ultimul scrape:</strong> ${comp.lastScraped || '—'}</div>
+          `;
+        }
+      } catch(e) {
+        console.error('Failed to load stats:', e);
+        document.getElementById('jobsCount').textContent = '?';
+        document.getElementById('verifiedCount').textContent = '?';
+        const now = new Date();
+        document.getElementById('lastRunTime').textContent = now.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('lastRunDate').textContent = now.toLocaleDateString('ro-RO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        document.getElementById('jobsListContent').innerHTML = '<li style="color:#999;">Nu s-au putut încărca job-urile. Pagina se actualizează automat la fiecare 30s.</li>';
+      }
+    }
+    loadStats();
+    setInterval(loadStats, 30000);
+  </script>
 </body>
 </html>

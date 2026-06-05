@@ -39,10 +39,9 @@ node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=e
 - SOLR tests use conditional `itIfSolr` helper — auto-skip when `SOLR_AUTH` not set
 
 ### 6. Docs Generation
-- `scripts/generate-docs.js` — generates `docs/index.html` from `jobs.json` + `company.json`
-- Run standalone: `npm run docs`
-- Called automatically at end of `npm run scrape`
-- Dark-themed UI, reads real stats (job count, cities, work modes)
+- `docs/index.html` — static HTML page with client-side JS that fetches live data from Peviitor API
+- No build step needed; open `docs/index.html` in a browser
+- Auto-refreshes every 30 seconds
 
 ### 7. Module Structure
 - `src/anaf.js` — core ANAF library (imported by company.js)
