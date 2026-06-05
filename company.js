@@ -138,8 +138,9 @@ export async function getCompanyData() {
     const nameMatch = searchResults.find(c =>
       c.name.toUpperCase().trim() === ANAF_SEARCH_QUERY.toUpperCase()
     );
+    let selectedCIF;
     if (nameMatch) {
-      var selectedCIF = nameMatch.cui;
+      selectedCIF = nameMatch.cui;
       console.log(`Found exact name match: ${nameMatch.name} (CIF: ${selectedCIF})`);
     } else {
       const exactMatch = searchResults.find(c =>
@@ -149,7 +150,7 @@ export async function getCompanyData() {
       );
 
       if (exactMatch) {
-        var selectedCIF = exactMatch.cui;
+        selectedCIF = exactMatch.cui;
         console.log(`Found exact match: ${exactMatch.name} (CIF: ${selectedCIF})`);
       } else {
         console.log("No exact match with 'Funcțiune' status, trying first active company...");
@@ -157,7 +158,7 @@ export async function getCompanyData() {
         if (!activeMatch) {
           throw new Error(`No active company found for brand: ${COMPANY_BRAND}`);
         }
-        var selectedCIF = activeMatch.cui;
+        selectedCIF = activeMatch.cui;
         console.log(`Selected: ${activeMatch.name} (CIF: ${selectedCIF})`);
       }
     }

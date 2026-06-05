@@ -1,4 +1,58 @@
-<!DOCTYPE html>
+import fs from "fs";
+
+const DOCS_DIR = "docs";
+const DOCS_FILE = `${DOCS_DIR}/index.html`;
+
+function readJson(path) {
+  try {
+    if (fs.existsSync(path)) {
+      return JSON.parse(fs.readFileSync(path, "utf-8"));
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+function formatDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return d.toLocaleDateString("ro-RO", {
+    year: "numeric", month: "long", day: "numeric",
+    hour: "2-digit", minute: "2-digit"
+  });
+}
+
+function summarizeJobs(jobs) {
+  if (!jobs || !Array.isArray(jobs)) {
+    return { count: 0, cities: [], workmodes: {} };
+  }
+  const cities = [...new Set((jobs || []).flatMap(j => j.location || []))].sort();
+  const workmodes = {};
+  for (const j of jobs) {
+    const w = j.workmode || "unknown";
+    workmodes[w] = (workmodes[w] || 0) + 1;
+  }
+  return { count: jobs.length, cities, workmodes };
+}
+
+function generateDocs() {
+  const jobsData = readJson("jobs.json");
+  const companyData = readJson("company.json");
+  const jobs = jobsData?.jobs || [];
+  const summary = summarizeJobs(jobs);
+  const scrapedAt = jobsData?.scrapedAt || null;
+  const companyName = companyData?.summary?.company || "CONTINENTAL HOTELS SA";
+  const cif = companyData?.summary?.cif || "1559737";
+  const active = companyData?.summary?.active !== false;
+
+  const workmodeRows = Object.entries(summary.workmodes)
+    .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+    .join("");
+
+  const cityList = summary.cities.map(c => `<li>${c}</li>`).join("");
+
+  const html = `<!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
@@ -202,26 +256,26 @@
         </h1>
       </div>
       <div>
-        <span class="badge badge-success">Activ</span>
-        <span class="badge badge-warning">CIF 1559737</span>
+        <span class="badge ${active ? "badge-success" : "badge-danger"}">${active ? "Activ" : "Inactiv"}</span>
+        <span class="badge badge-warning">CIF ${cif}</span>
       </div>
     </header>
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="value">6</div>
+        <div class="value">${summary.count}</div>
         <div class="label">Joburi active</div>
       </div>
       <div class="stat-card">
-        <div class="value">3</div>
+        <div class="value">${summary.cities.length}</div>
         <div class="label">Orașe</div>
       </div>
       <div class="stat-card">
-        <div class="value">1</div>
+        <div class="value">${Object.keys(summary.workmodes).length}</div>
         <div class="label">Tipuri de program</div>
       </div>
       <div class="stat-card">
-        <div class="value" style="font-size:1rem;word-break:break-all;">CONTINENTAL HOTELS SA</div>
+        <div class="value" style="font-size:1rem;word-break:break-all;">${companyName}</div>
         <div class="label">Companie</div>
       </div>
     </div>
@@ -233,14 +287,16 @@
           <tr><th>Tip program</th><th>Număr joburi</th></tr>
         </thead>
         <tbody>
-          <tr><td>on-site</td><td>6</td></tr>
+          ${workmodeRows || "<tr><td colspan='2' style='color:var(--text-muted)'>Nu există date</td></tr>"}
         </tbody>
       </table>
     </section>
 
     <section>
       <h2>📍 Locații</h2>
-      <div class="chip-list"><span class="chip">Bucuresti</span><span class="chip">Drobeta-Turnu Severin</span><span class="chip">Sibiu</span></div>
+      ${summary.cities.length > 0
+        ? `<div class="chip-list">${summary.cities.map(c => `<span class="chip">${c}</span>`).join("")}</div>`
+        : '<p style="color:var(--text-muted)">Nu există date</p>'}
     </section>
 
     <section>
@@ -287,9 +343,23 @@ npm run test:e2e           # teste e2e (necesită SOLR_AUTH)</pre>
         <a href="https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper" target="_blank">GitHub</a> •
         <a href="https://peviitor.ro" target="_blank">peviitor.ro</a>
       </span>
-      <span>Generat la 4 iunie 2026 la 23:56</span>
+      <span>Generat la ${formatDate(scrapedAt)}</span>
     </div>
 
   </div>
 </body>
-</html>
+</html>`;
+
+  if (!fs.existsSync(DOCS_DIR)) {
+    fs.mkdirSync(DOCS_DIR, { recursive: true });
+  }
+
+  fs.writeFileSync(DOCS_FILE, html, "utf-8");
+  console.log(`✅ Docs generated: ${DOCS_FILE}`);
+}
+
+export { generateDocs };
+
+if (process.argv[1] && import.meta.url === `file://${process.argv[1]}`) {
+  generateDocs();
+}

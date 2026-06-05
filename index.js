@@ -4,6 +4,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { validateAndGetCompany, addCompanyToCompanyCore } from "./company.js";
 import { querySOLR, deleteJobByUrl, upsertJobs } from "./solr.js";
+import { generateDocs } from "./scripts/generate-docs.js";
 
 const COMPANY_CIF = "1559737";
 const JOB_API = "https://www.jobs-continentalhotels.ro/_ajax/get-job-list.php";
@@ -201,6 +202,9 @@ async function main() {
     if (scrapedCount > 0) {
       console.log(`Successfully scraped and uploaded ${scrapedCount} jobs`);
     }
+
+    console.log("=== Step 6: Generate docs ===");
+    generateDocs();
   } catch (error) {
     console.error("Fatal error:", error.message);
     process.exit(1);
