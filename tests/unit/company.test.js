@@ -7,7 +7,7 @@ jest.unstable_mockModule('node-fetch', () => ({
   default: mockFetch
 }));
 
-const COMPANY_JSON_PATH = 'company.json';
+const COMPANY_JSON_PATH = 'tmp/company.json';
 
 function backupCompanyJson() {
   if (fs.existsSync(COMPANY_JSON_PATH)) {
@@ -81,6 +81,7 @@ describe('company.js', () => {
 
   beforeAll(async () => {
     process.env.SOLR_AUTH = 'test:test';
+    if (!fs.existsSync('tmp')) fs.mkdirSync('tmp');
     savedCompanyJson = backupCompanyJson();
     company = await import('../../company.js');
   });
