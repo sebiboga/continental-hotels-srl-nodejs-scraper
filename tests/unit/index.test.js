@@ -30,17 +30,17 @@ describe('index.js Component Tests', () => {
 
     it('should keep company uppercase', () => {
       const payload = {
-        source: 'epam.com',
-        company: 'epam systems international srl',
-        cif: '33159615',
+        source: 'jobs-continentalhotels.ro',
+        company: 'continental hotels sa',
+        cif: '1559737',
         jobs: [
-          { url: 'https://test.com/1', title: 'Job 1', company: 'epam systems', cif: '33159615' }
+          { url: 'https://test.com/1', title: 'Job 1', company: 'continental systems', cif: '1559737' }
         ]
       };
 
       const result = index.transformJobsForSOLR(payload);
 
-      expect(result.company).toBe('EPAM SYSTEMS INTERNATIONAL SRL');
+      expect(result.company).toBe('CONTINENTAL HOTELS SA');
     });
 
     it('should normalize workmode values', () => {
@@ -70,15 +70,15 @@ describe('index.js Component Tests', () => {
   describe('mapToJobModel', () => {
     it('should map raw job to job model format', () => {
       const rawJob = {
-        url: 'https://careers.epam.com/job/123',
+        url: 'https://www.jobs-continentalhotels.ro/job/123',
         title: 'Senior Developer',
         location: ['Bucharest'],
         tags: ['Java', 'Spring'],
         workmode: 'hybrid'
       };
 
-      const COMPANY_NAME = 'EPAM SYSTEMS INTERNATIONAL SRL';
-      const COMPANY_CIF = '33159615';
+      const COMPANY_NAME = 'CONTINENTAL HOTELS SA';
+      const COMPANY_CIF = '1559737';
 
       const result = index.mapToJobModel(rawJob, COMPANY_CIF, COMPANY_NAME);
 
@@ -99,7 +99,7 @@ describe('index.js Component Tests', () => {
         title: 'Job 1'
       };
 
-      const result = index.mapToJobModel(rawJob, '33159615');
+      const result = index.mapToJobModel(rawJob, '1559737');
 
       expect(result.location).toBeUndefined();
       expect(result.tags).toBeUndefined();
@@ -109,112 +109,68 @@ describe('index.js Component Tests', () => {
     it('should handle missing title', () => {
       const rawJob = { url: 'https://test.com/1' };
 
-      const result = index.mapToJobModel(rawJob, '33159615');
+      const result = index.mapToJobModel(rawJob, '1559737');
 
       expect(result.title).toBeUndefined();
       expect(result.url).toBe('https://test.com/1');
     });
   });
 
-  describe('parseApiJobs', () => {
-    it('should parse EPAM API response format', () => {
-      const apiData = {
-        data: {
-          total: 100,
-          jobs: [
-            {
-              uid: '123',
-              name: 'Senior Developer',
-              city: [{ name: 'Bucharest' }],
-              country: [{ name: 'Romania' }],
-              vacancy_type: 'Hybrid',
-              skills: ['Java', 'Spring']
-            }
-          ]
-        }
-      };
+  describe('parseHtmlJobs (Continental Hotels AJAX response)', () => {
+    const sampleHtml = `
+      <a href="https://www.jobs-continentalhotels.ro/ro/job-details-future/100-achizitor" class="job-listing">
+        <div class="job-listing-details">
+          <div class="job-listing-description">
+            <h3 class="job-listing-title">Achizitor</h3>
+            <h4 class="job-listing-company">Aprovizionare</h4>
+          </div>
+        </div>
+        <div class="job-listing-footer">
+          <ul><li><small>Continental Hotels - Sediul central Bucuresti, Grand Hotel Continental Bucuresti</small></li></ul>
+        </div>
+      </a>
+      <a href="/ro/job-details-future/200-bucatar" class="job-listing">
+        <div class="job-listing-details">
+          <div class="job-listing-description">
+            <h3 class="job-listing-title">Bucătar</h3>
+            <h4 class="job-listing-company">Food &amp; Beverage</h4>
+          </div>
+        </div>
+        <div class="job-listing-footer">
+          <ul><li><small>Continental Forum Sibiu 4*, Continental Forum Arad 4*</small></li></ul>
+        </div>
+      </a>
+    `;
 
-      const result = index.parseApiJobs(apiData);
-
-      expect(result.jobs).toHaveLength(1);
-      expect(result.jobs[0].title).toBe('Senior Developer');
-      expect(result.jobs[0].location).toEqual(['Bucharest']);
-      expect(result.jobs[0].workmode).toBe('hybrid');
+    it('parses title, URL and tags', () => {
+      const { jobs, total } = index.parseHtmlJobs(sampleHtml);
+      expect(total).toBe(2);
+      expect(jobs[0].title).toBe('Achizitor');
+      expect(jobs[0].url).toBe('https://www.jobs-continentalhotels.ro/ro/job-details-future/100-achizitor');
+      expect(jobs[0].tags).toEqual(['aprovizionare']);
     });
 
-    it('should handle empty job list', () => {
-      const apiData = { data: { total: 0, jobs: [] } };
-
-      const result = index.parseApiJobs(apiData);
-
-      expect(result.jobs).toEqual([]);
+    it('builds absolute URL from relative href', () => {
+      const { jobs } = index.parseHtmlJobs(sampleHtml);
+      expect(jobs[1].url).toBe('https://www.jobs-continentalhotels.ro/ro/job-details-future/200-bucatar');
     });
 
-    it('should handle missing data field', () => {
-      const result = index.parseApiJobs({});
-
-      expect(result.jobs).toEqual([]);
+    it('extracts Romanian cities from concatenated locationText', () => {
+      const { jobs } = index.parseHtmlJobs(sampleHtml);
+      expect(jobs[0].location).toContain('București');
+      expect(jobs[1].location).toEqual(expect.arrayContaining(['Sibiu', 'Arad']));
     });
 
-    it('should handle multiple cities', () => {
-      const apiData = {
-        data: {
-          total: 1,
-          jobs: [
-            {
-              uid: '123',
-              name: 'Developer',
-              city: [{ name: 'Bucharest' }, { name: 'Cluj-Napoca' }],
-              country: [{ name: 'Romania' }]
-            }
-          ]
-        }
-      };
-
-      const result = index.parseApiJobs(apiData);
-
-      expect(result.jobs[0].location).toEqual(['Bucharest', 'Cluj-Napoca']);
-    });
-  });
-
-  describe('URL Generation', () => {
-    it('should use seo.url when available', () => {
-      const apiData = {
-        data: {
-          total: 1,
-          jobs: [
-            {
-              uid: 'blt123',
-              name: 'Test Job',
-              seo: { url: '/en/vacancy/test-job-blt123_en' },
-              city: [{ name: 'Bucharest' }]
-            }
-          ]
-        }
-      };
-
-      const result = index.parseApiJobs(apiData);
-
-      expect(result.jobs[0].url).toBe('https://careers.epam.com/en/vacancy/test-job-blt123_en');
+    it('sets workmode to on-site (hotel staff)', () => {
+      const { jobs } = index.parseHtmlJobs(sampleHtml);
+      expect(jobs[0].workmode).toBe('on-site');
+      expect(jobs[1].workmode).toBe('on-site');
     });
 
-    it('should fallback to uid-based URL when no seo.url', () => {
-      const apiData = {
-        data: {
-          total: 1,
-          jobs: [
-            {
-              uid: 'blt456',
-              name: 'Test Job',
-              city: [{ name: 'Bucharest' }]
-            }
-          ]
-        }
-      };
-
-      const result = index.parseApiJobs(apiData);
-
-      expect(result.jobs[0].url).toBe('https://careers.epam.com/en/vacancy/blt456_en');
+    it('returns empty when no .job-listing anchors are present', () => {
+      const { jobs, total } = index.parseHtmlJobs('<html><body></body></html>');
+      expect(jobs).toEqual([]);
+      expect(total).toBe(0);
     });
   });
 });
