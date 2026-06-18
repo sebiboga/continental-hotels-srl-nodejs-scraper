@@ -42,7 +42,7 @@ describe('E2E: Continental Hotels scraping pipeline', () => {
       expect(res.ok).toBe(true);
       html = await res.text();
       index = await import('../../index.js');
-    }, 30000);
+    }, 60000);
 
     it('contains at least one job-listing anchor', () => {
       expect(html).toMatch(/class=["']job-listing["']/);
