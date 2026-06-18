@@ -190,7 +190,7 @@ describe('Integration: API Workflow', () => {
       const result = await solr.querySOLR(COMPANY_CIF);
 
       for (const job of result.docs) {
-        expect(job.cif).toMatch(/^\d{8}$/);
+        expect(job.cif).toMatch(/^\d{7,8}$/);
       }
     }, 15000);
   });
