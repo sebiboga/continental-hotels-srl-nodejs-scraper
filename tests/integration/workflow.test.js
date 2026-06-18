@@ -107,7 +107,8 @@ describe('Integration: API Workflow', () => {
       expect(continental.brand.toLowerCase()).toBe('continental hotels');
       expect(continental.status).toBe('activ');
       expect(Array.isArray(continental.location)).toBe(true);
-      expect(continental.lastScraped).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      // accept YYYY-MM-DD or full ISO timestamp (legacy records)
+      expect(continental.lastScraped).toMatch(/^\d{4}-\d{2}-\d{2}(T.*)?$/);
     }, 15000);
 
     itIfSolr('should have required company model fields', async () => {
