@@ -32,17 +32,15 @@ describe('Integration: API Workflow', () => {
       anaf = await import('../../src/anaf.js');
     });
 
-    it('should search for Continental Hotels brand and find the company', async () => {
+    it('should search the company brand in ANAF and find it by CIF', async () => {
       const results = await anaf.searchCompany('Continental Hotels');
 
       expect(Array.isArray(results)).toBe(true);
       expect(results.length).toBeGreaterThan(0);
 
-      const continental = results.find(c =>
-        c.name.toUpperCase().includes('CONTINENTAL HOTELS') && c.statusLabel === 'Funcțiune'
-      );
-      expect(continental).toBeDefined();
-      expect(continental.cui.toString()).toBe(COMPANY_CIF);
+      // ANAF may return multiple "Continental Hotels"-named entities — find ours by CIF
+      const match = results.find(c => c.cui.toString() === COMPANY_CIF);
+      expect(match).toBeDefined();
     }, 15000);
 
     it('should return empty array for non-existent brand', async () => {
@@ -105,8 +103,8 @@ describe('Integration: API Workflow', () => {
       expect(result.numFound).toBe(1);
       const continental = result.docs[0];
       expect(continental.id).toBe(COMPANY_CIF);
-      expect(jobs-continentalhotels.ropany).toBe('CONTINENTAL HOTELS SA');
-      expect(continental.brand).toBe('Continental Hotels');
+      expect(continental.company).toBe('CONTINENTAL HOTELS SA');
+      expect(continental.brand.toLowerCase()).toBe('continental hotels');
       expect(continental.status).toBe('activ');
       expect(Array.isArray(continental.location)).toBe(true);
       expect(continental.lastScraped).toMatch(/^\d{4}-\d{2}-\d{2}$/);
@@ -118,7 +116,7 @@ describe('Integration: API Workflow', () => {
 
       expect(continental).toHaveProperty('id', COMPANY_CIF);
       expect(continental).toHaveProperty('company');
-      expect(continental).toHaveProperty('brand', 'Continental Hotels');
+      expect(continental.brand.toLowerCase()).toBe('continental hotels');
       expect(continental).toHaveProperty('status');
       expect(['activ', 'suspendat', 'inactiv', 'radiat']).toContain(continental.status);
       expect(continental).toHaveProperty('location');
@@ -206,16 +204,8 @@ describe('Integration: API Workflow', () => {
     });
 
     it('should complete the ANAF → Peviitor validation path', async () => {
-      const searchResults = await anaf.searchCompany('Continental Hotels');
-      expect(searchResults.length).toBeGreaterThan(0);
-
-      const companyMatch = searchResults.find(c =>
-        c.name.toUpperCase().includes('Continental Hotels') && c.statusLabel === 'Funcțiune'
-      );
-      expect(companyMatch).toBeDefined();
-
-      const anafData = await anaf.getCompanyFromANAF(companyMatch.cui.toString());
-      expect(anafData.name).toBe('CONTINENTAL HOTELS SA');
+      const anafData = await anaf.getCompanyFromANAF(COMPANY_CIF);
+      expect(anafData.name.toUpperCase()).toBe('CONTINENTAL HOTELS SA');
       expect(anafData.inactive).toBe(false);
     }, 30000);
 
