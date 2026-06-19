@@ -10,11 +10,11 @@
 | Location | Calea GRIVITEI, 143, Bucureşti Sectorul 1, Bucureşti |
 | Website | [https://continentalhotels.ro](https://continentalhotels.ro) |
 | Careers | [https://www.jobs-continentalhotels.ro](https://www.jobs-continentalhotels.ro) |
-| Last Scraped | 2026-06-18 |
+| Last Scraped | 2026-06-19 |
 
 ## Current Job Listings (6)
 
-_Generated: 2026-06-18T10:18:09.379Z_
+_Generated: 2026-06-19T10:23:15.915Z_
 
 ### Asistent Vânzări Hotel
 
